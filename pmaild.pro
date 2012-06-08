@@ -9,6 +9,8 @@ INCLUDEPATH += .
 QT -= gui
 QT += network
 
+QMAKE_CXXFLAGS += -std=gnu++0x
+
 # Input
 HEADERS += PMaildServer.hpp PMaildCore.hpp PMaildServerBase.hpp PMaildServerSmtp.hpp
 SOURCES += main.cpp PMaildServer.cpp PMaildServerBase.cpp PMaildServerSmtp.cpp

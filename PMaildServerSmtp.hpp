@@ -5,5 +5,11 @@ class PMaildServerSmtp: public PMaildServerBase {
 
 public:
 	PMaildServerSmtp(QSslSocket *sock, PMaildCore *core, PMaildServer *server);
+
+public slots:
+	void server_cmd_quit(const QList<QByteArray>&);
+
+protected:
+	void handleUnknownCommand();
 };
 

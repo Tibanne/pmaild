@@ -9,9 +9,19 @@ class PMaildServerBase: public QObject {
 public:
 	PMaildServerBase(QSslSocket *sock, PMaildCore *core, PMaildServer *server);
 
+public slots:
+	void socketReadyRead();
+
 protected:
 	QSslSocket *sock;
 	PMaildCore *core;
 	PMaildServer *server;
+
+	QByteArray buf_in;
+
+	virtual void parseInBuffer();
+	virtual void parseInCommand(const QByteArray &cmd);
+
+	virtual void handleUnknownCommand() = 0;
 };
 

@@ -7,3 +7,13 @@ PMaildServerSmtp::PMaildServerSmtp(QSslSocket *_sock, PMaildCore *_core, PMaildS
 {
 	// void
 }
+
+void PMaildServerSmtp::handleUnknownCommand() {
+	qDebug("unknown cmd");
+}
+
+void PMaildServerSmtp::server_cmd_quit(const QList<QByteArray>&) {
+	qDebug("quit");
+	sock->close();
+}
+
