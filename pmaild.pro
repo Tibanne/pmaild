@@ -10,5 +10,5 @@ QT -= gui
 QT += network
 
 # Input
-HEADERS += PMaildServer.hpp PMaildCore.hpp
-SOURCES += main.cpp PMaildServer.cpp
+HEADERS += PMaildServer.hpp PMaildCore.hpp PMaildServerBase.hpp PMaildServerSmtp.hpp
+SOURCES += main.cpp PMaildServer.cpp PMaildServerBase.cpp PMaildServerSmtp.cpp
