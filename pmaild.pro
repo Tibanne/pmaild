@@ -13,4 +13,4 @@ QMAKE_CXXFLAGS += -std=gnu++0x
 
 # Input
 HEADERS += PMaildServer.hpp PMaildCore.hpp PMaildCoreMySQL.hpp PMaildServerBase.hpp PMaildServerSmtp.hpp
-SOURCES += main.cpp PMaildServer.cpp PMaildServerBase.cpp PMaildServerSmtp.cpp
+SOURCES += main.cpp PMaildServer.cpp PMaildCoreMySQL.cpp PMaildServerBase.cpp PMaildServerSmtp.cpp

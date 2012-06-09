@@ -4,5 +4,6 @@
 class PMaildCoreMySQL: public PMaildCore {
 	Q_OBJECT;
 public:
+	QByteArray getHostName();
 };
 

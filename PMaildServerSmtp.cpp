@@ -17,3 +17,7 @@ void PMaildServerSmtp::server_cmd_quit(const QList<QByteArray>&) {
 	sock->close();
 }
 
+void PMaildServerSmtp::welcome() {
+	writeLine("220 "+core->getHostName()+" ESMTP (pmaild v3.0.0)");
+}
+

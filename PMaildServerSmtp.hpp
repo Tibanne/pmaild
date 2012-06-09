@@ -11,5 +11,6 @@ public slots:
 
 protected:
 	void handleUnknownCommand();
+	void welcome();
 };
 
