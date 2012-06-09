@@ -1,5 +1,7 @@
 #include <QObject>
 
-class PMaildCore {
+class PMaildCore: public QObject {
+	Q_OBJECT;
+public:
 };
 

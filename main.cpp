@@ -1,6 +1,6 @@
 #include <QCoreApplication>
 #include "PMaildServer.hpp"
-#include "PMaildCore.hpp"
+#include "PMaildCoreMySQL.hpp"
 
 // set this define to zero once tests finished
 #define SERVER_PORT_OFFSET 20000
@@ -9,7 +9,7 @@ int main(int argc, char *argv[]) {
 	QCoreApplication app(argc, argv);
 
 	// load various daemons
-	PMaildCore *core = new PMaildCore();
+	PMaildCore *core = new PMaildCoreMySQL();
 	PMaildServer *tmp;
 
 	tmp = new PMaildServer(core, PMaildServer::SERVER_POP3);

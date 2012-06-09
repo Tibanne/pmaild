@@ -18,6 +18,7 @@ protected:
 	PMaildServer *server;
 
 	QByteArray buf_in;
+	QByteArray buf_out;
 
 	virtual void parseInBuffer();
 	virtual void parseInCommand(const QByteArray &cmd);

@@ -3,6 +3,7 @@
 class PMaildCore;
 
 class PMaildServer: public QTcpServer {
+	Q_OBJECT;
 public:
 	enum PMaildServerType {
 		SERVER_POP3,
