@@ -115,6 +115,8 @@ void PMaildServerBase::parseInCommand(const QByteArray &cmd) {
 	}
 
 	QByteArray method = "server_cmd_" + list.at(0).toLower();
+	// remove first entry
+	list.erase(list.begin());
 	
 	if (!QMetaObject::invokeMethod(this, method.data(), Qt::DirectConnection, Q_ARG(QList<QByteArray>, list))) {
 		handleUnknownCommand();

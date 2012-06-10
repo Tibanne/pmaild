@@ -1,0 +1,4 @@
+moc_*
+pmaild
+*.o
+Makefile
