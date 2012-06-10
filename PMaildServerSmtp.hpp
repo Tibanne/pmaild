@@ -20,12 +20,15 @@ public slots:
 	void server_cmd_help(const QList<QByteArray>&);
 	void server_cmd_starttls(const QList<QByteArray>&);
 	void server_cmd_mail(const QList<QByteArray>&);
+	void server_cmd_rcpt(const QList<QByteArray>&);
+	void server_cmd_data(const QList<QByteArray>&);
+	void server_cmd_txlg(const QList<QByteArray>&);
 
 protected:
 	void handleUnknownCommand();
 	void welcome();
 
-	enum { NORMAL, AUTH_LOGIN_USERNAME, AUTH_LOGIN_PASSWORD, AUTH_PLAIN } smtp_input_mode;
+	enum { NORMAL, AUTH_LOGIN_USERNAME, AUTH_LOGIN_PASSWORD, AUTH_PLAIN, MAIL_DATA } smtp_input_mode;
 	QByteArray auth_data_username, auth_data_password;
 
 	PMaildMtaTxn *txn;

@@ -16,6 +16,34 @@ void PMaildServerSmtp::parseInBuffer() {
 
 		int pos = buf_in.indexOf('\n');
 		if (pos == -1) break; // no full line in buffer
+
+		if (smtp_input_mode == MAIL_DATA) {
+			QByteArray data = buf_in.left(pos+1);
+			buf_in.remove(0, pos+1);
+
+			if (data.right(2) != "\r\n") {
+				writeLine("550 Sorry, you are supposed to end lines with <CR><LF>, which seems to not be the case right now");
+				smtp_input_mode = NORMAL;
+				txn->reset();
+				continue;
+			}
+
+			if (data.trimmed() != ".") {
+				// end of email
+				if (data.left(2) == "..") data = data.remove(0, 1);
+				txn->append(data);
+				continue;
+			}
+
+			// end of email transmission
+			smtp_input_mode = NORMAL;
+			if (!txn->finish()) {
+				writeLine(txn->errorMsg());
+				continue;
+			}
+			writeLine("250 2.0.0 OK have a nice day");
+			continue;
+		}
 		QByteArray cmd = buf_in.left(pos).trimmed();
 		buf_in.remove(0, pos+1);
 		if (!cmd.isEmpty()) {
@@ -180,7 +208,6 @@ void PMaildServerSmtp::server_cmd_mail(const QList<QByteArray>&a) {
 		return;
 	}
 	if ((a.isEmpty()) || (a.at(0).left(5).toUpper() != "FROM:")) {
-		qDebug("got a(0)=%s", a.at(0).data());
 		writeLine("550 Invalid syntax. Expected MAIL FROM: <user@domain.tld>");
 		return;
 	}
@@ -217,4 +244,59 @@ void PMaildServerSmtp::server_cmd_mail(const QList<QByteArray>&a) {
 		return;
 	}
 	writeLine("250 2.1.0 Originator <"+from+"> OK");
+}
+
+void PMaildServerSmtp::server_cmd_rcpt(const QList<QByteArray>&a) {
+	// RCPT TO: foo@bar.com
+	// RCPT TO:foo@bar.com
+	// RCPT TO: <foo@bar.com>
+	if (!txn->hasHelo()) {
+		writeLine("503 Sorry, can't let you send mails without EHLO/HELO first");
+		return;
+	}
+	if ((a.isEmpty()) || (a.at(0).left(3).toUpper() != "TO:")) {
+		writeLine("550 Invalid syntax. Expected RCPT TO: <user@domain.tld>");
+		return;
+	}
+
+	QByteArray to;
+	if (a.at(0).size() > 5) {
+		to = a.at(0).mid(5).trimmed();
+	} else if (a.size() > 1) {
+		to = a.at(1);
+	}
+	if ((to.at(0) == '<') && (to.right(1) == ">")) {
+		to = to.mid(1, to.length()-2).trimmed();
+	}
+
+	if (!txn->addTo(to)) {
+		writeLine(txn->errorMsg());
+		return;
+	}
+	writeLine("250 2.5.0 Target <"+to+"> OK");
+}
+
+void PMaildServerSmtp::server_cmd_data(const QList<QByteArray>&) {
+	if (!buf_in.isEmpty()) {
+		writeLine("550 Invalid use of pipelining, you can't pipeline a mail body");
+		return;
+	}
+	if (!txn->prepare()) {
+		writeLine("450 Internal error, please retry again later and make sure you provided both MAIL FROM: and RCPT TO:");
+		return;
+	}
+	writeLine("354 Enter message, ending with \".\" on a line by itself (CR/LF)");
+	smtp_input_mode = MAIL_DATA;
+}
+
+void PMaildServerSmtp::server_cmd_txlg(const QList<QByteArray>&) {
+	QMap<QByteArray,QByteArray> l = txn->transmitLog();
+	for(auto i = l.begin(); i != l.end(); i++) {
+		if (i.value().isEmpty()) {
+			writeLine("250-<"+i.key()+">: 250 2.0.0 OK have a nice day");
+		} else {
+			writeLine("250-<"+i.key()+">: "+i.value());
+		}
+	}
+	writeLine("250 End of list");
 }

@@ -44,3 +44,29 @@ bool PMaildMtaTxn::setFrom(const QByteArray &from, const QMap<QByteArray, QByteA
 	email_from = from;
 	return true;
 }
+
+bool PMaildMtaTxn::addTo(const QByteArray &to) {
+	if (to.isEmpty()) {
+		error_msg = "550 Target is missing";
+		return false;
+	}
+	// TODO
+	return true;
+}
+
+bool PMaildMtaTxn::prepare() {
+	return true;
+}
+
+void PMaildMtaTxn::append(const QByteArray &) {
+	// TODO
+}
+
+bool PMaildMtaTxn::finish() {
+	error_msg = "550 Daemon not fully written yet";
+	return false;
+}
+
+const QMap<QByteArray,QByteArray> &PMaildMtaTxn::transmitLog() const {
+	return transmit_log;
+}
