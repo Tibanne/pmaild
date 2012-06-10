@@ -9,6 +9,7 @@ class PMaildCoreMySQL: public PMaildCore {
 public:
 	PMaildCoreMySQL(QSettings &settings);
 	bool authUser(QString login, QString password);
+	PMaildDomain *getDomain(QString domain);
 
 	static bool check();
 

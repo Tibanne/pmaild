@@ -27,3 +27,7 @@ bool PMaildCoreMySQL::check() {
 	}
 	return true;
 }
+
+PMaildDomain *PMaildCoreMySQL::getDomain(QString domain) {
+	return NULL;
+}

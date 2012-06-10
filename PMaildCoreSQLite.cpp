@@ -1,4 +1,5 @@
 #include "PMaildCoreSQLite.hpp"
+#include "PMaildDomain.hpp"
 #include <QSqlDatabase>
 #include <QSettings>
 #include <QSqlError>
@@ -23,4 +24,8 @@ bool PMaildCoreSQLite::check() {
 		return false;
 	}
 	return true;
+}
+
+PMaildDomain *PMaildCoreSQLite::getDomain(QString) {
+	return NULL;
 }
