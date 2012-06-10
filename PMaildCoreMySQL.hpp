@@ -1,4 +1,5 @@
 #include <QObject>
+#include <QSqlDatabase>
 #include "PMaildCore.hpp"
 
 class QSettings;
@@ -10,5 +11,8 @@ public:
 	bool authUser(QString login, QString password);
 
 	static bool check();
+
+private:
+	QSqlDatabase db;
 };
 

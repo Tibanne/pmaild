@@ -64,7 +64,7 @@ void PMaildMtaTxn::append(const QByteArray &) {
 }
 
 bool PMaildMtaTxn::finish() {
-	error_msg = "550 Daemon not fully written yet";
+	error_msg = "450 Daemon not fully written yet";
 	return false;
 }
 
