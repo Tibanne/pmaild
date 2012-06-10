@@ -1,3 +1,6 @@
+#ifndef PMAILDSERVERBASE_HPP
+#define PMAILDSERVERBASE_HPP
+
 #include <QObject>
 #include <QSslSocket>
 #include <QByteArray>
@@ -49,3 +52,4 @@ protected:
 	enum { INIT, VALID, CLOSING } status;
 };
 
+#endif /* PMAILDSERVERBASE_HPP */

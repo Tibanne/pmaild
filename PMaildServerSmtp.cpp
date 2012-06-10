@@ -65,6 +65,8 @@ void PMaildServerSmtp::parseInBuffer() {
 					smtp_input_mode = NORMAL;
 					handleAuthPlainComplete(cmd);
 					break;
+				case MAIL_DATA:
+					break; // will never arrive up to here, but will make GCC happy to handle this case
 			}
 		}
 	}

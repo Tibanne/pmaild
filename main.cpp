@@ -19,14 +19,27 @@ int main(int argc, char *argv[]) {
 
 	if (!init_ssl(settings)) return 1;
 
-	// load various daemons
-	PMaildCore *core = new PMaildCoreMySQL();
+	// initialize core
+	PMaildCore *core;
+	QString core_type = settings.value("core/backend", "SQLITE").toString().toUpper();
+
+	if (core_type == "MYSQL") {
+		if (!PMaildCoreMySQL::check()) {
+			qDebug("MySQL driver not available in this build of Qt");
+			return 2;
+		}
+		core = new PMaildCoreMySQL();
+	} else {
+		qDebug("Invalid core backend selected, please fix configuration");
+		return 2;
+	}
+
 	PMaildServer *tmp;
 
 	tmp = new PMaildServer(core, PMaildServer::SERVER_POP3);
 	tmp->listen(QHostAddress::Any, SERVER_PORT_OFFSET + 110);
 
-	tmp = new PMaildServer(core, PMaildServer::SERVER_POP3S);
+	tmp = new PMaildServer(core, PMaildServer::SERVER_POP3, true);
 	tmp->listen(QHostAddress::Any, SERVER_PORT_OFFSET + 995);
 
 	tmp = new PMaildServer(core, PMaildServer::SERVER_SMTP);
@@ -35,13 +48,13 @@ int main(int argc, char *argv[]) {
 	tmp = new PMaildServer(core, PMaildServer::SERVER_SMTP);
 	tmp->listen(QHostAddress::Any, SERVER_PORT_OFFSET + 587);
 
-	tmp = new PMaildServer(core, PMaildServer::SERVER_SMTPS);
+	tmp = new PMaildServer(core, PMaildServer::SERVER_SMTP, true);
 	tmp->listen(QHostAddress::Any, SERVER_PORT_OFFSET + 465);
 
 	tmp = new PMaildServer(core, PMaildServer::SERVER_IMAP4);
 	tmp->listen(QHostAddress::Any, SERVER_PORT_OFFSET + 143);
 
-	tmp = new PMaildServer(core, PMaildServer::SERVER_IMAP4S);
+	tmp = new PMaildServer(core, PMaildServer::SERVER_IMAP4, true);
 	tmp->listen(QHostAddress::Any, SERVER_PORT_OFFSET + 993);
 
 	return app.exec();
