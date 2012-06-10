@@ -1,7 +1,7 @@
 #include "PMaildCoreMySQL.hpp"
 #include <QSqlDatabase>
 
-PMaildCoreMySQL::PMaildCoreMySQL() {
+PMaildCoreMySQL::PMaildCoreMySQL(QSettings &settings): PMaildCore(settings) {
 }
 
 QByteArray PMaildCoreMySQL::getHostName() {

@@ -5,11 +5,7 @@
 #include <QSslKey>
 #include <QSslCertificate>
 #include <QSslConfiguration>
-#include "PMaildServer.hpp"
 #include "PMaildCoreMySQL.hpp"
-
-// set this define to zero once tests finished
-#define SERVER_PORT_OFFSET 20000
 
 static bool init_ssl(QSettings &settings);
 
@@ -28,34 +24,13 @@ int main(int argc, char *argv[]) {
 			qDebug("MySQL driver not available in this build of Qt");
 			return 2;
 		}
-		core = new PMaildCoreMySQL();
+		core = new PMaildCoreMySQL(settings);
 	} else {
 		qDebug("Invalid core backend selected, please fix configuration");
 		return 2;
 	}
 
-	PMaildServer *tmp;
-
-	tmp = new PMaildServer(core, PMaildServer::SERVER_POP3);
-	tmp->listen(QHostAddress::Any, SERVER_PORT_OFFSET + 110);
-
-	tmp = new PMaildServer(core, PMaildServer::SERVER_POP3, true);
-	tmp->listen(QHostAddress::Any, SERVER_PORT_OFFSET + 995);
-
-	tmp = new PMaildServer(core, PMaildServer::SERVER_SMTP);
-	tmp->listen(QHostAddress::Any, SERVER_PORT_OFFSET + 25);
-
-	tmp = new PMaildServer(core, PMaildServer::SERVER_SMTP);
-	tmp->listen(QHostAddress::Any, SERVER_PORT_OFFSET + 587);
-
-	tmp = new PMaildServer(core, PMaildServer::SERVER_SMTP, true);
-	tmp->listen(QHostAddress::Any, SERVER_PORT_OFFSET + 465);
-
-	tmp = new PMaildServer(core, PMaildServer::SERVER_IMAP4);
-	tmp->listen(QHostAddress::Any, SERVER_PORT_OFFSET + 143);
-
-	tmp = new PMaildServer(core, PMaildServer::SERVER_IMAP4, true);
-	tmp->listen(QHostAddress::Any, SERVER_PORT_OFFSET + 993);
+	core->startDaemons();
 
 	return app.exec();
 }

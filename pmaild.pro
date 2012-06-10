@@ -17,4 +17,5 @@ HEADERS += PMaildServer.hpp PMaildCore.hpp PMaildCoreMySQL.hpp PMaildServerBase.
     PMaildServerPop3.hpp
 SOURCES += main.cpp PMaildServer.cpp PMaildCoreMySQL.cpp PMaildServerBase.cpp PMaildServerSmtp.cpp PMaildMtaTxn.cpp \
     PMaildServerImap4.cpp \
-    PMaildServerPop3.cpp
+    PMaildServerPop3.cpp \
+    PMaildCore.cpp
