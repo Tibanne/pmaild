@@ -1,8 +1,14 @@
 #include "PMaildCoreSQLite.hpp"
 #include <QSqlDatabase>
+#include <QSettings>
 
 PMaildCoreSQLite::PMaildCoreSQLite(QSettings &settings): PMaildCore(settings) {
-	db = QSqlDatabase::addDatabase("SQLITE");
+	db = QSqlDatabase::addDatabase("QSQLITE");
+	db.setDatabaseName(settings.value("sqlite/file", "pmaild.db").toString());
+	if (!db.open()) {
+		qDebug("Fatal error while initializing database backend, giving up!");
+		exit(1); // ensure we exit *now*, since we are before app.exec(), calling QCoreApplication::exit() won't work
+	}
 }
 
 bool PMaildCoreSQLite::authUser(QString login, QString password) {
