@@ -18,11 +18,11 @@ void PMaildCore::startDaemons() {
 		// parse setting
 		QStringList def = settings.value(d.at(i)).toStringList();
 		if (def.size() != 3) continue; // not the right number
+
 		// TYPE,LISTEN_IP,PORT
 		QHostAddress addr(def.at(1));
 		quint16 port;
 		bool auto_ssl = false;
-
 		PMaildServer::PMaildServerType type;
 
 		if (def.at(0) == "SMTP") {
@@ -48,8 +48,20 @@ void PMaildCore::startDaemons() {
 			delete tmp;
 			continue;
 		}
+		connect(tmp, SIGNAL(destroyed(QObject*)), this, SLOT(daemonLost(QObject*)));
 		daemons.insert(d.at(i), tmp);
 	}
 
 	settings.endGroup();
+}
+
+void PMaildCore::daemonLost(QObject *o) {
+	for(auto i = daemons.begin(); i != daemons.end(); i++) {
+		if (i.value() == o)
+			daemons.erase(i);
+	}
+}
+
+QByteArray PMaildCore::getHostName() {
+	return settings.value("core/hostname", "localhost").toByteArray();
 }

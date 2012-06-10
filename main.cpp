@@ -6,6 +6,7 @@
 #include <QSslCertificate>
 #include <QSslConfiguration>
 #include "PMaildCoreMySQL.hpp"
+#include "PMaildCoreSQLite.hpp"
 
 static bool init_ssl(QSettings &settings);
 
@@ -25,6 +26,12 @@ int main(int argc, char *argv[]) {
 			return 2;
 		}
 		core = new PMaildCoreMySQL(settings);
+	} else if (core_type == "SQLITE") {
+		if (!PMaildCoreSQLite::check()) {
+			qDebug("SQLite3 driver not available in this build of Qt");
+			return 2;
+		}
+		core = new PMaildCoreSQLite(settings);
 	} else {
 		qDebug("Invalid core backend selected, please fix configuration");
 		return 2;
