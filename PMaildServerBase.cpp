@@ -10,6 +10,7 @@ PMaildServerBase::PMaildServerBase(QSslSocket *_sock, PMaildCore *_core, PMaildS
 
 	connect(sock, SIGNAL(disconnected()), this, SLOT(socketDisconnected()));
 	connect(sock, SIGNAL(destroyed(QObject*)), this, SLOT(deleteLater()));
+	connect(sock, SIGNAL(encrypted()), this, SLOT(socketSslReady()));
 	connect(this, SIGNAL(destroyed(QObject*)), sock, SLOT(deleteLater()));
 	connect(&timer, SIGNAL(timeout()), this, SLOT(timeout()));
 	connect(core, SIGNAL(destroyed(QObject*)), this, SLOT(deleteLater()));

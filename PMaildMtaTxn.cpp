@@ -7,6 +7,7 @@ PMaildMtaTxn::PMaildMtaTxn(PMaildCore *_core, QObject *parent): QObject(parent) 
 
 bool PMaildMtaTxn::setHelo(const QByteArray&h) {
 	if (h.isEmpty()) return false;
+	if (!helo.isEmpty()) return false; // already got a HELO
 
 	helo = h;
 	return true;

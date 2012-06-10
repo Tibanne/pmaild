@@ -7,7 +7,7 @@ TARGET =
 DEPENDPATH += .
 INCLUDEPATH += .
 QT -= gui
-QT += network
+QT += network sql
 
 QMAKE_CXXFLAGS += -std=gnu++0x
 
