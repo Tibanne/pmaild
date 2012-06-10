@@ -35,11 +35,22 @@ void PMaildServerBase::noSsl() {
 	if (sock->bytesAvailable()) socketReadyRead();
 }
 
+bool PMaildServerBase::isSsl() {
+	return sock->isEncrypted();
+}
+
+void PMaildServerBase::ssl() {
+	if (status != INIT) return;
+	sock->startServerEncryption();
+}
+
 void PMaildServerBase::socketSslErrors(const QList<QSslError>&) {
 	qDebug("ssl error, giving up");
 }
 
 void PMaildServerBase::socketSslReady() {
+	if (status != INIT) return;
+
 	connect(sock, SIGNAL(readyRead()), this, SLOT(socketReadyRead()));
 	connect(sock, SIGNAL(bytesWritten(qint64)), this, SLOT(socketBytesWritten(qint64)));
 

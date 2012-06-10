@@ -19,6 +19,7 @@ public:
 	void setTimeout(int ms);
 	bool isSsl();
 	void noSsl();
+	void ssl();
 
 public slots:
 	void socketReadyRead();

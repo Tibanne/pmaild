@@ -17,6 +17,9 @@ void PMaildServer::incomingConnection(int socketDescriptor) {
 		case SERVER_SMTP:
 			(new PMaildServerSmtp(sock, core, this))->noSsl();
 			break;
+		case SERVER_SMTPS:
+			(new PMaildServerSmtp(sock, core, this))->ssl();
+			break;
 	}
 }
 
