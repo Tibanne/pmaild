@@ -7,6 +7,7 @@
 class QSettings;
 class PMaildServer;
 class PMaildDomain;
+class PMaildUser;
 
 class PMaildCore: public QObject {
 	Q_OBJECT;
@@ -17,8 +18,10 @@ public:
 	void startDaemons();
 
 	virtual QByteArray getHostName();
-	virtual bool authUser(QString login, QString password) = 0;
-	virtual PMaildDomain *getDomain(QString domain) = 0;
+	virtual bool authUser(QString login, QString password);
+
+	virtual PMaildDomain getDomain(QString domain) = 0;
+	virtual PMaildUser getUser(const PMaildDomain&, QString user) = 0;
 	QSettings &settings;
 
 public slots:

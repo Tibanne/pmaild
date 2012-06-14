@@ -11,8 +11,8 @@ class PMaildCoreSQLite: public PMaildCore {
 	Q_OBJECT;
 public:
 	PMaildCoreSQLite(QSettings &settings);
-	bool authUser(QString login, QString password);
-	PMaildDomain *getDomain(QString domain);
+	PMaildDomain getDomain(QString domain);
+	PMaildUser getUser(const PMaildDomain&, QString user);
 
 	static bool check();
 

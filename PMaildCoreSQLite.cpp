@@ -1,5 +1,6 @@
 #include "PMaildCoreSQLite.hpp"
 #include "PMaildDomain.hpp"
+#include "PMaildUser.hpp"
 #include <QSqlDatabase>
 #include <QSettings>
 #include <QSqlError>
@@ -14,8 +15,8 @@ PMaildCoreSQLite::PMaildCoreSQLite(QSettings &settings): PMaildCore(settings) {
 	}
 }
 
-bool PMaildCoreSQLite::authUser(QString login, QString password) {
-	return false;
+PMaildUser PMaildCoreSQLite::getUser(const PMaildDomain &domain, QString) {
+	return PMaildUser();
 }
 
 bool PMaildCoreSQLite::check() {
@@ -26,6 +27,6 @@ bool PMaildCoreSQLite::check() {
 	return true;
 }
 
-PMaildDomain *PMaildCoreSQLite::getDomain(QString) {
-	return NULL;
+PMaildDomain PMaildCoreSQLite::getDomain(QString) {
+	return PMaildDomain();
 }

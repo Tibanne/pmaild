@@ -1,10 +1,27 @@
 #include "PMaildCore.hpp"
 #include "PMaildServer.hpp"
+#include "PMaildDomain.hpp"
+#include "PMaildUser.hpp"
 #include <QSettings>
 #include <QStringList>
 
 PMaildCore::PMaildCore(QSettings &_settings): settings(_settings) {
 	// void
+}
+
+bool PMaildCore::authUser(QString login, QString password) {
+	// login is in the format user@domain
+	int pos = login.lastIndexOf('@');
+	if (pos == -1) return false; // invalid domain
+	QString domain = login.mid(pos+1);
+	QString user = login.left(pos);
+
+	PMaildDomain dom = getDomain(domain);
+	if (dom.isNull()) return false;
+	PMaildUser ouser = dom.getUser(user);
+	if (ouser.isNull()) return false;
+
+	return ouser.auth(password);
 }
 
 void PMaildCore::startDaemons() {

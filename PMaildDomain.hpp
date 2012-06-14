@@ -1,17 +1,26 @@
 #ifndef PMAILDDOMAIN_HPP
 #define PMAILDDOMAIN_HPP
 
-#include <QObject>
+#include <QVariantMap>
 
 class PMaildCore;
+class PMaildUser;
 
-class PMaildDomain: public QObject {
-	Q_OBJECT;
+class PMaildDomain {
 public:
-	explicit PMaildDomain(PMaildCore *parent);
+	PMaildDomain(PMaildCore *parent, const QVariantMap &info);
+	PMaildDomain();
+
+	PMaildUser getUser(QString user);
+	bool authUser(QString user, QString password);
+
+	int getId() const;
+
+	bool isNull() const;
 
 private:
 	PMaildCore *core;
+	QVariantMap info;
 };
 
 #endif // PMAILDDOMAIN_HPP

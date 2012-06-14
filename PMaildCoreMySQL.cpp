@@ -1,7 +1,8 @@
 #include "PMaildCoreMySQL.hpp"
-#include <QSqlDatabase>
+#include "PMaildDomain.hpp"
+#include "PMaildUser.hpp"
 #include <QSettings>
-#include <QSqlError>
+#include <QtSql>
 
 PMaildCoreMySQL::PMaildCoreMySQL(QSettings &settings): PMaildCore(settings) {
 	db = QSqlDatabase::addDatabase("QMYSQL");
@@ -14,10 +15,13 @@ PMaildCoreMySQL::PMaildCoreMySQL(QSettings &settings): PMaildCore(settings) {
 		qDebug("Error: %s", qPrintable(db.lastError().text()));
 		exit(1); // ensure we exit *now*, since we are before app.exec(), calling QCoreApplication::exit() won't work
 	}
-}
 
-bool PMaildCoreMySQL::authUser(QString login, QString password) {
-	return true; // TODO code me!
+	query_get_domain_by_domain = QSqlQuery(db);
+	query_get_domain_by_domain.prepare("SELECT * FROM domains WHERE domain = :domain");
+	query_get_domain_by_domainid = QSqlQuery(db);
+	query_get_domain_by_domainid.prepare("SELECT * FROM domains WHERE domainid = :domainid");
+	query_get_domainalias = QSqlQuery(db);
+	query_get_domainalias.prepare("SELECT * FROM domainaliases WHERE domain = :domain");
 }
 
 bool PMaildCoreMySQL::check() {
@@ -28,6 +32,59 @@ bool PMaildCoreMySQL::check() {
 	return true;
 }
 
-PMaildDomain *PMaildCoreMySQL::getDomain(QString domain) {
-	return NULL;
+PMaildDomain PMaildCoreMySQL::getDomain(QString domain) {
+	// get domain from db
+	QMap<QString,QString> params;
+	params.insert(":domain", domain);
+
+	QVariantMap data = execQueryGetFirst(query_get_domain_by_domain, params);
+	if (data.isEmpty()) {
+		// check for domain aliases
+		data = execQueryGetFirst(query_get_domainalias, params);
+		if (data.isEmpty()) return PMaildDomain();
+
+		params.clear();
+		params.insert(":domainid", data.value("domainid").toString());
+		data = execQueryGetFirst(query_get_domain_by_domainid, params);
+		if (data.isEmpty()) return PMaildDomain();
+	}
+
+	return PMaildDomain(this, data);
 }
+
+PMaildUser PMaildCoreMySQL::getUser(const PMaildDomain &domain, QString user) {
+	QSqlQuery q(QString("SELECT * FROM z%1_accounts WHERE user = :user").arg(domain.getId()), db);
+
+	QMap<QString,QString> params;
+	params.insert(":user", user);
+
+	QVariantMap res = execQueryGetFirst(q, params);
+	if (res.isEmpty()) return PMaildUser();
+
+	return PMaildUser(this, domain, res);
+}
+
+QVariantMap PMaildCoreMySQL::execQueryGetFirst(QSqlQuery &query, const QMap<QString,QString> &params) {
+	for(auto i = params.begin(); i != params.end(); i++)
+		query.bindValue(i.key(), i.value());
+	
+	if (!query.exec()) {
+		qDebug("MySQL error: %s", qPrintable(query.lastError().text()));
+		return QVariantMap();
+	}
+
+	if ((!query.isActive()) || (!query.isSelect()) || (!query.first())) {
+		return QVariantMap();
+	}
+
+	QSqlRecord rec = query.record();
+	QVariantMap res;
+
+	for(int i = 0; i < rec.count(); i++) {
+		res.insert(rec.fieldName(i), query.value(i));
+	}
+
+	query.finish();
+	return res;
+}
+
