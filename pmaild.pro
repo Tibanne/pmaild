@@ -10,6 +10,7 @@ QT -= gui
 QT += network sql
 
 QMAKE_CXXFLAGS += -std=gnu++0x
+QMAKE_LIBS += -lcrypt
 
 # Input
 HEADERS += PMaildServer.hpp PMaildCore.hpp PMaildCoreMySQL.hpp PMaildServerBase.hpp PMaildServerSmtp.hpp PMaildMtaTxn.hpp \

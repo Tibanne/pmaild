@@ -18,7 +18,8 @@ public:
 	void startDaemons();
 
 	virtual QByteArray getHostName();
-	virtual bool authUser(QString login, QString password);
+	bool authUser(QString login, QString password);
+	PMaildUser getUser(QString login);
 
 	virtual PMaildDomain getDomain(QString domain) = 0;
 	virtual PMaildUser getUser(const PMaildDomain&, QString user) = 0;

@@ -9,19 +9,23 @@ PMaildCore::PMaildCore(QSettings &_settings): settings(_settings) {
 	// void
 }
 
-bool PMaildCore::authUser(QString login, QString password) {
+PMaildUser PMaildCore::getUser(QString login) {
 	// login is in the format user@domain
 	int pos = login.lastIndexOf('@');
-	if (pos == -1) return false; // invalid domain
+	if (pos == -1) return PMaildUser(); // invalid domain
 	QString domain = login.mid(pos+1);
 	QString user = login.left(pos);
 
 	PMaildDomain dom = getDomain(domain);
-	if (dom.isNull()) return false;
+	if (dom.isNull()) return PMaildUser();
 	PMaildUser ouser = dom.getUser(user);
-	if (ouser.isNull()) return false;
+	if (ouser.isNull()) return PMaildUser();
 
-	return ouser.auth(password);
+	return ouser;
+}
+
+bool PMaildCore::authUser(QString login, QString password) {
+	return getUser(login).auth(password);
 }
 
 void PMaildCore::startDaemons() {

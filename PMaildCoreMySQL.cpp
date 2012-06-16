@@ -53,7 +53,8 @@ PMaildDomain PMaildCoreMySQL::getDomain(QString domain) {
 }
 
 PMaildUser PMaildCoreMySQL::getUser(const PMaildDomain &domain, QString user) {
-	QSqlQuery q(QString("SELECT * FROM z%1_accounts WHERE user = :user").arg(domain.getId()), db);
+	QSqlQuery q(db);
+	q.prepare(QString("SELECT * FROM z%1_accounts WHERE user = :user").arg(domain.getId()));
 
 	QMap<QString,QString> params;
 	params.insert(":user", user);
