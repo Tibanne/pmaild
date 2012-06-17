@@ -49,7 +49,13 @@ void PMaildServerPop3::parseInBuffer() {
 	// TODO: implement buf_in size check here, fail if buffer too big (protect against infinitely increasing buffer)
 }
 void PMaildServerPop3::server_cmd_quit(const QList<QByteArray>&) {
-	// TODO: handle to-delete messages here
+	if (!user.isNull()) {
+		for(auto i = toDelete.begin(); i != toDelete.end(); i++) {
+			PMaildMail mail = user.getEmailById(*i);
+			if (mail.isNull()) continue;
+			mail.erase();
+		}
+	}
 	writeLine("+OK "+core->getHostName()+" closing control connexion.");
 	close();
 }
@@ -268,5 +274,24 @@ void PMaildServerPop3::server_cmd_uidl(const QList<QByteArray>&p) {
 		writeLine(QString("%1 %2").arg(getLidFromId(list.at(i).getId())).arg(list.at(i).getUniqName()).toUtf8());
 	}
 	writeLine(".");
+}
+
+void PMaildServerPop3::server_cmd_dele(const QList<QByteArray>&p) {
+	if (user.isNull()) {
+		writeLine("-ERR need to login first");
+		return;
+	}
+	if (p.size() != 1) {
+		writeLine("-ERR syntax error. Should use DELE <id>");
+		return;
+	}
+	quint64 lid = p.at(0).toLongLong();
+	if (!lid2id.contains(lid)) {
+		writeLine("-ERR Unknown message");
+		return;
+	}
+	quint64 id = lid2id.value(lid);
+	toDelete.insert(id);
+	writeLine("+OK Nessage marked for deletion");
 }
 

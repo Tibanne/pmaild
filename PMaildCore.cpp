@@ -86,3 +86,13 @@ void PMaildCore::daemonLost(QObject *o) {
 QByteArray PMaildCore::getHostName() {
 	return settings.value("core/hostname", "localhost").toByteArray();
 }
+
+QDir PMaildCore::getSpoolPath() {
+	QDir path(settings.value("core/spool", "spool").toString());
+	if (!path.exists()) {
+		path.mkpath(".");
+	}
+	path.makeAbsolute();
+	return path;
+}
+

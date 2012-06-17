@@ -16,11 +16,32 @@ PMaildUser PMaildDomain::getUser(QString user) {
 	return core->getUser(*this, user);
 }
 
-int PMaildDomain::getId() const {
-	return info.value("domainid").toInt();
+quint64 PMaildDomain::getId() const {
+	return info.value("domainid").toLongLong();
 }
 
 bool PMaildDomain::isNull() const {
 	return core == NULL;
+}
+
+QDir PMaildDomain::getPath() const {
+	if (isNull()) return QDir();
+	QDir dir = core->getSpoolPath();
+
+	if (!dir.exists("domains")) {
+		dir.mkdir("domains");
+	}
+	dir.cd("domains");
+
+	QString domainid;
+	domainid.sprintf("%010llu", getId());
+	QString path = domainid.right(1) + "/" + domainid.right(2) + "/" + domainid;
+
+	if (!dir.exists(path)) {
+		dir.mkpath(path);
+	}
+	dir.cd(path);
+
+	return dir;
 }
 

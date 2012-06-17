@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QMap>
+#include <QDir>
 
 class QSettings;
 class PMaildServer;
@@ -21,11 +22,13 @@ public:
 	virtual QByteArray getHostName();
 	bool authUser(QString login, QString password);
 	PMaildUser getUser(QString login);
+	QDir getSpoolPath();
 
 	virtual PMaildDomain getDomain(QString domain) = 0;
 	virtual PMaildUser getUser(const PMaildDomain&, QString user) = 0;
 	virtual PMaildMail getEmailByUserId(const PMaildUser&user, int id) = 0;
 	virtual QList<PMaildMail> listEmailsByUserFolder(const PMaildUser&, int folder = 0) = 0;
+	virtual bool eraseMail(const PMaildMail&) = 0; // remove mail from db
 	QSettings &settings;
 
 public slots:

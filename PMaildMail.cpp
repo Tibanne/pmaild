@@ -1,4 +1,5 @@
 #include "PMaildMail.hpp"
+#include "PMaildCore.hpp"
 
 PMaildMail::PMaildMail(PMaildCore *_core, const PMaildUser &_user, const QVariantMap &_info) {
 	core = _core;
@@ -36,4 +37,26 @@ QString PMaildMail::getUniqName() const {
 	if (isNull()) return QString();
 	return info.value("uniqname").toString();
 }
+
+QString PMaildMail::getFilePath() const {
+	QDir dir = user.getPath();
+	return dir.filePath(getUniqName());
+}
+
+bool PMaildMail::erase() {
+	if (!core->eraseMail(*this)) return false;
+
+	QFile f(getFilePath());
+	f.remove();
+	return true;
+}
+
+PMaildUser PMaildMail::getUser() {
+	return user;
+}
+
+const PMaildUser PMaildMail::getUser() const {
+	return user;
+}
+
 

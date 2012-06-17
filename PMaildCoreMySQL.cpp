@@ -129,3 +129,18 @@ PMaildMail PMaildCoreMySQL::getEmailByUserId(const PMaildUser&user, int id) {
 	return PMaildMail(this, user, res);
 }
 
+bool PMaildCoreMySQL::eraseMail(const PMaildMail&mail) {
+	// 3 requests needed
+	QSqlQuery q1(db), q2(db), q3(db);
+
+	q1.prepare(QString("DELETE FROM z%1_mails WHERE userid = :userid AND mailid = :mailid").arg(mail.getUser().getDomain().getId()));
+	q2.prepare(QString("DELETE FROM z%1_mails_mime WHERE userid = :userid AND mailid = :mailid").arg(mail.getUser().getDomain().getId()));
+	q3.prepare(QString("DELETE FROM z%1_mails_mime_header WHERE userid = :userid AND mailid = :mailid").arg(mail.getUser().getDomain().getId()));
+
+	if (!q1.exec()) return false;
+	q2.exec();
+	q3.exec();
+	
+	return true;
+}
+

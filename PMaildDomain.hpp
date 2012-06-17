@@ -2,6 +2,7 @@
 #define PMAILDDOMAIN_HPP
 
 #include <QVariantMap>
+#include <QDir>
 
 class PMaildCore;
 class PMaildUser;
@@ -14,7 +15,8 @@ public:
 	PMaildUser getUser(QString user);
 	bool authUser(QString user, QString password);
 
-	int getId() const;
+	quint64 getId() const;
+	QDir getPath() const;
 
 	bool isNull() const;
 

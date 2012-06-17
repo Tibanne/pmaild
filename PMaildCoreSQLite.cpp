@@ -40,3 +40,7 @@ PMaildMail PMaildCoreSQLite::getEmailByUserId(const PMaildUser&, int) {
 	return PMaildMail();
 }
 
+bool PMaildCoreSQLite::eraseMail(const PMaildMail&) {
+	return false;
+}
+

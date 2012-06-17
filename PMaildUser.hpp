@@ -16,7 +16,8 @@ public:
 	bool auth(QString password);
 
 	bool isNull() const;
-	int getId() const;
+	quint64 getId() const;
+	QDir getPath() const;
 
 	PMaildMail getEmailById(quint64 id);
 	QList<PMaildMail> listEmailsByFolder(int folder = 0);

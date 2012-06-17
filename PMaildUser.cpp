@@ -17,9 +17,26 @@ bool PMaildUser::isNull() const {
 	return core == NULL;
 }
 
-int PMaildUser::getId() const {
+quint64 PMaildUser::getId() const {
 	if (isNull()) return 0;
-	return info.value("id").toInt();
+	return info.value("id").toLongLong();
+}
+
+QDir PMaildUser::getPath() const {
+	if (isNull()) return QDir();
+
+	QDir dir = domain.getPath();
+
+	QString userid;
+	userid.sprintf("%04llu", getId());
+	QString path = userid.right(1) + "/" + userid.right(2) + "/" + userid;
+
+	if (!dir.exists(path)) {
+		dir.mkpath(path);
+	}
+	dir.cd(path);
+
+	return dir;
 }
 
 bool PMaildUser::auth(QString password) {

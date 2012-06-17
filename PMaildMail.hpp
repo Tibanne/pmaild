@@ -1,4 +1,5 @@
 #include <QVariantMap>
+#include <QFile>
 #include "PMaildUser.hpp"
 
 class PMaildCore;
@@ -15,6 +16,12 @@ public:
 	bool isDeleted() const; // check if flag "deleted" is set
 	quint64 getSize() const; // return size of email
 	QString getUniqName() const; // return uniqname
+	QString getFilePath() const;
+
+	bool erase(); // destroy email
+
+	PMaildUser getUser();
+	const PMaildUser getUser() const;
 
 private:
 	PMaildCore *core;
