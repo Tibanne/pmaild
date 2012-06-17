@@ -305,7 +305,7 @@ void PMaildServerPop3::server_cmd_retr(const QList<QByteArray>&p) {
 		return;
 	}
 	if (p.size() != 1) {
-		writeLine("-ERR syntax error. Should use DELE <id>");
+		writeLine("-ERR syntax error. Should use RETR <id>");
 		return;
 	}
 	quint64 lid = p.at(0).toLongLong();
@@ -324,6 +324,43 @@ void PMaildServerPop3::server_cmd_retr(const QList<QByteArray>&p) {
 		return;
 	}
 	QByteArray data = mail.readAll();
+	data = data.replace("\n.", "\n..");
+	writeLine("+OK");
+	write(data);
+	if (data.right(1) != "\n") write("\r\n");
+	writeLine(".");
+
+	mail.unsetFlag("recent");
+}
+
+void PMaildServerPop3::server_cmd_top(const QList<QByteArray>&p) {
+	if (user.isNull()) {
+		writeLine("-ERR need to login first");
+		return;
+	}
+	if ((p.size() < 1) || (p.size() > 2)) {
+		writeLine("-ERR syntax error. Should use TOP <id> [lines]");
+		return;
+	}
+	quint64 lid = p.at(0).toLongLong();
+	if (!lid2id.contains(lid)) {
+		writeLine("-ERR Unknown message");
+		return;
+	}
+	quint64 id = lid2id.value(lid);
+	if (toDelete.contains(id)) {
+		writeLine("-ERR Message is marked for deletion");
+		return;
+	}
+	PMaildMail mail = user.getEmailById(id);
+	if (mail.isNull()) {
+		writeLine("-ERR mail is missing from server");
+		return;
+	}
+	int lines = 0;
+	if (p.size() == 2) lines = p.at(1).toInt();
+
+	QByteArray data = mail.readLines(lines);
 	data = data.replace("\n.", "\n..");
 	writeLine("+OK");
 	write(data);

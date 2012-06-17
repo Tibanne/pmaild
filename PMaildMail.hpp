@@ -21,6 +21,7 @@ public:
 	bool erase(); // destroy email
 	bool unsetFlag(const QString &flag);
 	QByteArray readAll();
+	QByteArray readLines(int lines);
 
 	PMaildUser getUser();
 	const PMaildUser getUser() const;

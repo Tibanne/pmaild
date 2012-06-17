@@ -66,6 +66,30 @@ QByteArray PMaildMail::readAll() {
 	return f.readAll(); // ~QFile will close it
 }
 
+QByteArray PMaildMail::readLines(int lines) {
+	// limit to header + lines lines
+	QByteArray res;
+	QFile f(getFilePath());
+	if (!f.open(QIODevice::ReadOnly)) return QByteArray();
+
+	bool headers = true;
+	while(true) {
+		QByteArray line = f.readLine();
+		if (line == "") break;
+
+		if (headers) {
+			res.append(line);
+			if (line.trimmed() == "")
+				headers = false;
+			continue;
+		}
+
+		if (--lines <= 0) break;
+		res.append(line);
+	}
+	return res;
+}
+
 bool PMaildMail::unsetFlag(const QString &) {
 	// TODO
 	return false;
