@@ -1,4 +1,6 @@
 #include "PMaildUser.hpp"
+#include "PMaildCore.hpp"
+#include "PMaildMail.hpp"
 #include <unistd.h> /* for crypt() */
 
 PMaildUser::PMaildUser(PMaildCore*_core, const PMaildDomain&_domain, const QVariantMap &_info) {
@@ -32,5 +34,9 @@ bool PMaildUser::auth(QString password) {
 	}
 	qDebug("Unknown DB password type: %s", qPrintable(info.value("password").toString()));
 	return false; // TODO
+}
+
+QList<PMaildMail> PMaildUser::listEmailsByFolder(int folder) {
+	return core->listEmailsByUserFolder(*this, folder);
 }
 

@@ -24,4 +24,5 @@ SOURCES += main.cpp PMaildServer.cpp PMaildCoreMySQL.cpp PMaildServerBase.cpp PM
     PMaildCore.cpp \
     PMaildCoreSQLite.cpp \
     PMaildDomain.cpp \
-    PMaildUser.cpp
+    PMaildUser.cpp \
+    PMaildMail.cpp

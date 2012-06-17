@@ -1,5 +1,6 @@
 #include "PMaildServerPop3.hpp"
 #include "PMaildCore.hpp"
+#include "PMaildMail.hpp"
 #include <QStringList>
 
 PMaildServerPop3::PMaildServerPop3(QSslSocket *_sock, PMaildCore *_core, PMaildServer *_server) :
@@ -170,5 +171,22 @@ void PMaildServerPop3::server_cmd_rset(const QList<QByteArray>&) {
 	}
 	toDelete.clear();
 	writeLine("+OK");
+}
+
+void PMaildServerPop3::server_cmd_stat(const QList<QByteArray>&) {
+	if (user.isNull()) {
+		writeLine("-ERR need to login first");
+		return;
+	}
+	qint64 size = 0, count = 0;
+	QList<PMaildMail> list = user.listEmailsByFolder(0); // Folder 0 = INBOX
+
+	for(int i = 0; i < list.size(); i++) {
+		if (list.at(i).isDeleted()) continue;
+		// TODO: check local toDelete
+		size += list.at(i).getSize();
+		count++;
+	}
+	writeLine(QString("+OK %1 %2").arg(count).arg(size).toUtf8());
 }
 

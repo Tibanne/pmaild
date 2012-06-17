@@ -8,6 +8,7 @@ class QSettings;
 class PMaildServer;
 class PMaildDomain;
 class PMaildUser;
+class PMaildMail;
 
 class PMaildCore: public QObject {
 	Q_OBJECT;
@@ -23,6 +24,7 @@ public:
 
 	virtual PMaildDomain getDomain(QString domain) = 0;
 	virtual PMaildUser getUser(const PMaildDomain&, QString user) = 0;
+	virtual QList<PMaildMail> listEmailsByUserFolder(const PMaildUser&, int folder = 0) = 0;
 	QSettings &settings;
 
 public slots:

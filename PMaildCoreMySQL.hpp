@@ -12,6 +12,7 @@ public:
 	PMaildCoreMySQL(QSettings &settings);
 	PMaildDomain getDomain(QString domain);
 	PMaildUser getUser(const PMaildDomain &, QString user);
+	QList<PMaildMail> listEmailsByUserFolder(const PMaildUser&, int folder);
 
 	static bool check();
 

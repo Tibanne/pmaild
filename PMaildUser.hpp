@@ -1,8 +1,12 @@
+#ifndef PMAILDUSER_HPP
+#define PMAILDUSER_HPP
+
 #include <QVariantMap>
 #include "PMaildDomain.hpp"
 
 class PMaildCore;
 class PMaildDomain;
+class PMaildMail;
 
 class PMaildUser {
 public:
@@ -13,9 +17,12 @@ public:
 
 	bool isNull() const;
 
+	QList<PMaildMail> listEmailsByFolder(int folder = 0);
+
 private:
 	QVariantMap info;
 	PMaildDomain domain;
 	PMaildCore *core;
 };
 
+#endif /* PMAILDUSER_HPP */

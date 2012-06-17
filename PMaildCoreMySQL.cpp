@@ -1,6 +1,7 @@
 #include "PMaildCoreMySQL.hpp"
 #include "PMaildDomain.hpp"
 #include "PMaildUser.hpp"
+#include "PMaildMail.hpp"
 #include <QSettings>
 #include <QtSql>
 
@@ -87,5 +88,9 @@ QVariantMap PMaildCoreMySQL::execQueryGetFirst(QSqlQuery &query, const QMap<QStr
 
 	query.finish();
 	return res;
+}
+
+QList<PMaildMail> PMaildCoreMySQL::listEmailsByUserFolder(const PMaildUser&, int) {
+	return QList<PMaildMail>();
 }
 
