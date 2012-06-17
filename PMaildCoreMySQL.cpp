@@ -35,7 +35,7 @@ bool PMaildCoreMySQL::check() {
 
 PMaildDomain PMaildCoreMySQL::getDomain(QString domain) {
 	// get domain from db
-	QMap<QString,QString> params;
+	QVariantMap params;
 	params.insert(":domain", domain);
 
 	QVariantMap data = execQueryGetFirst(query_get_domain_by_domain, params);
@@ -57,7 +57,7 @@ PMaildUser PMaildCoreMySQL::getUser(const PMaildDomain &domain, QString user) {
 	QSqlQuery q(db);
 	q.prepare(QString("SELECT * FROM z%1_accounts WHERE user = :user").arg(domain.getId()));
 
-	QMap<QString,QString> params;
+	QVariantMap params;
 	params.insert(":user", user);
 
 	QVariantMap res = execQueryGetFirst(q, params);
@@ -66,7 +66,7 @@ PMaildUser PMaildCoreMySQL::getUser(const PMaildDomain &domain, QString user) {
 	return PMaildUser(this, domain, res);
 }
 
-QVariantMap PMaildCoreMySQL::execQueryGetFirst(QSqlQuery &query, const QMap<QString,QString> &params) {
+QVariantMap PMaildCoreMySQL::execQueryGetFirst(QSqlQuery &query, const QVariantMap &params) {
 	for(auto i = params.begin(); i != params.end(); i++)
 		query.bindValue(i.key(), i.value());
 	
@@ -114,5 +114,18 @@ QList<PMaildMail> PMaildCoreMySQL::listEmailsByUserFolder(const PMaildUser&user,
 	} while(q.next());
 
 	return res;
+}
+
+PMaildMail PMaildCoreMySQL::getEmailByUserId(const PMaildUser&user, int id) {
+	QSqlQuery q(db);
+	q.prepare(QString("SELECT * FROM z%1_mails WHERE userid = :userid AND mailid = :mailid").arg(user.getDomain().getId()));
+	QVariantMap params;
+	params.insert(":userid", user.getId());
+	params.insert(":mailid", id);
+
+	QVariantMap res = execQueryGetFirst(q, params);
+	if (res.isEmpty()) return PMaildMail();
+
+	return PMaildMail(this, user, res);
 }
 

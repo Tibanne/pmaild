@@ -36,3 +36,7 @@ QList<PMaildMail> PMaildCoreSQLite::listEmailsByUserFolder(const PMaildUser&, in
 	return QList<PMaildMail>();
 }
 
+PMaildMail PMaildCoreSQLite::getEmailByUserId(const PMaildUser&, int) {
+	return PMaildMail();
+}
+

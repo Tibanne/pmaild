@@ -37,8 +37,13 @@ bool PMaildUser::auth(QString password) {
 		qDebug("failed login, good pass=%s bad pass=%s", db_pass.data(), c.data());
 		return false;
 	}
+	// TODO: handle other password storage methods, and handle NULL password
 	qDebug("Unknown DB password type: %s", qPrintable(info.value("password").toString()));
-	return false; // TODO
+	return false;
+}
+
+PMaildMail PMaildUser::getEmailById(quint64 id) {
+	return core->getEmailByUserId(*this, id);
 }
 
 QList<PMaildMail> PMaildUser::listEmailsByFolder(int folder) {

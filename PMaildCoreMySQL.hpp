@@ -12,6 +12,7 @@ public:
 	PMaildCoreMySQL(QSettings &settings);
 	PMaildDomain getDomain(QString domain);
 	PMaildUser getUser(const PMaildDomain &, QString user);
+	PMaildMail getEmailByUserId(const PMaildUser&user, int id);
 	QList<PMaildMail> listEmailsByUserFolder(const PMaildUser&, int folder);
 
 	static bool check();
@@ -19,7 +20,7 @@ public:
 private:
 	QSqlDatabase db;
 
-	QVariantMap execQueryGetFirst(QSqlQuery &query, const QMap<QString,QString> &params = QMap<QString,QString>());
+	QVariantMap execQueryGetFirst(QSqlQuery &query, const QVariantMap &params = QVariantMap());
 
 	// prepared queries ready to run
 	QSqlQuery query_get_domain_by_domain;

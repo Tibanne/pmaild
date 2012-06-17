@@ -14,6 +14,7 @@ public:
 
 	bool isDeleted() const; // check if flag "deleted" is set
 	quint64 getSize() const; // return size of email
+	QString getUniqName() const; // return uniqname
 
 private:
 	PMaildCore *core;

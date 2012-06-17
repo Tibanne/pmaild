@@ -32,3 +32,8 @@ quint64 PMaildMail::getSize() const {
 	return info.value("size").toLongLong();
 }
 
+QString PMaildMail::getUniqName() const {
+	if (isNull()) return QString();
+	return info.value("uniqname").toString();
+}
+

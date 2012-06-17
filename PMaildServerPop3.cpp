@@ -200,12 +200,30 @@ void PMaildServerPop3::server_cmd_stat(const QList<QByteArray>&) {
 	writeLine(QString("+OK %1 %2").arg(count).arg(size).toUtf8());
 }
 
-void PMaildServerPop3::server_cmd_list(const QList<QByteArray>&) {
+void PMaildServerPop3::server_cmd_list(const QList<QByteArray>&p) {
 	if (user.isNull()) {
 		writeLine("-ERR need to login first");
 		return;
 	}
-	// TODO: handle parameter to list
+	if (p.size() > 0) {
+		quint64 lid = p.at(0).toLongLong();
+		if (!lid2id.contains(lid)) {
+			writeLine("-ERR Unknown message");
+			return;
+		}
+		quint64 id = lid2id.value(lid);
+		if (toDelete.contains(id)) {
+			writeLine("-ERR Message was deleted, you can still restore it using RSET");
+			return;
+		}
+		PMaildMail mail = user.getEmailById(id);
+		if (mail.isNull()) {
+			writeLine("-ERR email has been lost");
+			return;
+		}
+		writeLine(QString("+OK %1 %2").arg(getLidFromId(mail.getId())).arg(mail.getSize()).toUtf8());
+		return;
+	}
 	QList<PMaildMail> list = user.listEmailsByFolder(0); // Folder 0 = INBOX
 
 	writeLine("+OK");
@@ -213,6 +231,41 @@ void PMaildServerPop3::server_cmd_list(const QList<QByteArray>&) {
 	for(int i = 0; i < list.size(); i++) {
 		// TODO: return correct mail id
 		writeLine(QString("%1 %2").arg(getLidFromId(list.at(i).getId())).arg(list.at(i).getSize()).toUtf8());
+	}
+	writeLine(".");
+}
+
+void PMaildServerPop3::server_cmd_uidl(const QList<QByteArray>&p) {
+	if (user.isNull()) {
+		writeLine("-ERR need to login first");
+		return;
+	}
+	if (p.size() > 0) {
+		quint64 lid = p.at(0).toLongLong();
+		if (!lid2id.contains(lid)) {
+			writeLine("-ERR Unknown message");
+			return;
+		}
+		quint64 id = lid2id.value(lid);
+		if (toDelete.contains(id)) {
+			writeLine("-ERR Message was deleted, you can still restore it using RSET");
+			return;
+		}
+		PMaildMail mail = user.getEmailById(id);
+		if (mail.isNull()) {
+			writeLine("-ERR email has been lost");
+			return;
+		}
+		writeLine(QString("+OK %1 %2").arg(getLidFromId(mail.getId())).arg(mail.getUniqName()).toUtf8());
+		return;
+	}
+	QList<PMaildMail> list = user.listEmailsByFolder(0); // Folder 0 = INBOX
+
+	writeLine("+OK");
+
+	for(int i = 0; i < list.size(); i++) {
+		// TODO: return correct mail id
+		writeLine(QString("%1 %2").arg(getLidFromId(list.at(i).getId())).arg(list.at(i).getUniqName()).toUtf8());
 	}
 	writeLine(".");
 }

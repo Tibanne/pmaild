@@ -13,6 +13,7 @@ public:
 	PMaildCoreSQLite(QSettings &settings);
 	PMaildDomain getDomain(QString domain);
 	PMaildUser getUser(const PMaildDomain&, QString user);
+	PMaildMail getEmailByUserId(const PMaildUser&user, int id);
 	QList<PMaildMail> listEmailsByUserFolder(const PMaildUser&, int folder);
 
 	static bool check();

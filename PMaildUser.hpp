@@ -18,6 +18,7 @@ public:
 	bool isNull() const;
 	int getId() const;
 
+	PMaildMail getEmailById(quint64 id);
 	QList<PMaildMail> listEmailsByFolder(int folder = 0);
 
 	PMaildDomain getDomain();
