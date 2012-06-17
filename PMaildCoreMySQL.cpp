@@ -90,7 +90,29 @@ QVariantMap PMaildCoreMySQL::execQueryGetFirst(QSqlQuery &query, const QMap<QStr
 	return res;
 }
 
-QList<PMaildMail> PMaildCoreMySQL::listEmailsByUserFolder(const PMaildUser&, int) {
-	return QList<PMaildMail>();
+QList<PMaildMail> PMaildCoreMySQL::listEmailsByUserFolder(const PMaildUser&user, int folder) {
+	QSqlQuery q(db);
+	q.prepare(QString("SELECT * FROM z%1_mails WHERE userid = :userid AND folder = :folder").arg(user.getDomain().getId()));
+	q.bindValue(":userid", user.getId());
+	q.bindValue(":folder", folder);
+
+	if (!q.exec()) {
+		qDebug("MySQL error: %s", qPrintable(q.lastError().text()));
+		return QList<PMaildMail>();
+	}
+	if ((!q.isActive()) || (!q.isSelect()) || (!q.first()))
+		return QList<PMaildMail>();
+	
+	QSqlRecord rec = q.record();
+	QList<PMaildMail> res;
+
+	do {
+		QVariantMap tmp;
+		for(int i = 0; i < rec.count(); i++)
+			tmp.insert(rec.fieldName(i), q.value(i));
+		res.append(PMaildMail(this, user, tmp));
+	} while(q.next());
+
+	return res;
 }
 

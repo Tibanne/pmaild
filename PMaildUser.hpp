@@ -16,8 +16,12 @@ public:
 	bool auth(QString password);
 
 	bool isNull() const;
+	int getId() const;
 
 	QList<PMaildMail> listEmailsByFolder(int folder = 0);
+
+	PMaildDomain getDomain();
+	const PMaildDomain &getDomain() const;
 
 private:
 	QVariantMap info;

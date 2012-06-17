@@ -17,6 +17,11 @@ bool PMaildUser::isNull() const {
 	return core == NULL;
 }
 
+int PMaildUser::getId() const {
+	if (isNull()) return 0;
+	return info.value("id").toInt();
+}
+
 bool PMaildUser::auth(QString password) {
 	if (isNull()) return false;
 	// convert to QByteArray for unix
@@ -38,5 +43,13 @@ bool PMaildUser::auth(QString password) {
 
 QList<PMaildMail> PMaildUser::listEmailsByFolder(int folder) {
 	return core->listEmailsByUserFolder(*this, folder);
+}
+
+const PMaildDomain &PMaildUser::getDomain() const {
+	return domain;
+}
+
+PMaildDomain PMaildUser::getDomain() {
+	return domain;
 }
 
