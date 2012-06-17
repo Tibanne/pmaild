@@ -190,3 +190,20 @@ void PMaildServerPop3::server_cmd_stat(const QList<QByteArray>&) {
 	writeLine(QString("+OK %1 %2").arg(count).arg(size).toUtf8());
 }
 
+void PMaildServerPop3::server_cmd_list(const QList<QByteArray>&) {
+	if (user.isNull()) {
+		writeLine("-ERR need to login first");
+		return;
+	}
+	// TODO: handle parameter to list
+	QList<PMaildMail> list = user.listEmailsByFolder(0); // Folder 0 = INBOX
+
+	writeLine("+OK");
+
+	for(int i = 0; i < list.size(); i++) {
+		// TODO: return correct mail id
+		writeLine(QString("%1 %2").arg(list.at(i).getId()).arg(list.at(i).getSize()).toUtf8());
+	}
+	writeLine(".");
+}
+

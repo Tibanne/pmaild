@@ -20,7 +20,7 @@ public slots:
 	void server_cmd_capa(const QList<QByteArray>&);
 	void server_cmd_rset(const QList<QByteArray>&);
 	void server_cmd_stat(const QList<QByteArray>&);
-//	void server_cmd_list(const QList<QByteArray>&);
+	void server_cmd_list(const QList<QByteArray>&);
 //	void server_cmd_uidl(const QList<QByteArray>&);
 //	void server_cmd_retr(const QList<QByteArray>&);
 //	void server_cmd_top(const QList<QByteArray>&);

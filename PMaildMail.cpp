@@ -10,6 +10,11 @@ PMaildMail::PMaildMail() {
 	core = NULL;
 }
 
+quint64 PMaildMail::getId() const {
+	if (isNull()) return 0;
+	return info.value("mailid").toLongLong();
+}
+
 bool PMaildMail::isNull() const {
 	return core == NULL;
 }
