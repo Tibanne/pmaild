@@ -6,6 +6,15 @@
 PMaildServerPop3::PMaildServerPop3(QSslSocket *_sock, PMaildCore *_core, PMaildServer *_server) :
 	PMaildServerBase(_sock, _core, _server)
 {
+	lid_max = 0;
+}
+
+quint64 PMaildServerPop3::getLidFromId(quint64 id) {
+	if (id2lid.contains(id)) return id2lid.value(id);
+	lid_max++;
+	id2lid.insert(id, lid_max);
+	lid2id.insert(lid_max, id);
+	return lid_max;
 }
 
 void PMaildServerPop3::welcome() {
@@ -185,6 +194,7 @@ void PMaildServerPop3::server_cmd_stat(const QList<QByteArray>&) {
 		if (list.at(i).isDeleted()) continue;
 		// TODO: check local toDelete
 		size += list.at(i).getSize();
+		getLidFromId(list.at(i).getId()); // assign a local id
 		count++;
 	}
 	writeLine(QString("+OK %1 %2").arg(count).arg(size).toUtf8());
@@ -202,7 +212,7 @@ void PMaildServerPop3::server_cmd_list(const QList<QByteArray>&) {
 
 	for(int i = 0; i < list.size(); i++) {
 		// TODO: return correct mail id
-		writeLine(QString("%1 %2").arg(list.at(i).getId()).arg(list.at(i).getSize()).toUtf8());
+		writeLine(QString("%1 %2").arg(getLidFromId(list.at(i).getId())).arg(list.at(i).getSize()).toUtf8());
 	}
 	writeLine(".");
 }

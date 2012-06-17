@@ -36,10 +36,15 @@ protected:
 	void parseInBuffer();
 
 	PMaildUser user; // currently logged in user
-	QMap<int,QString> toDelete; // map of mails pending deletion
 
 private:
 	void handleAuthPlainComplete(const QByteArray &);
+
+	quint64 getLidFromId(quint64 id);
+
+	QSet<quint64> toDelete; // set of mails pending deletion
+	QMap<quint64,quint64> lid2id, id2lid;
+	quint64 lid_max;
 };
 
 #endif // PMAILDSERVERPOP3_HPP
