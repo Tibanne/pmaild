@@ -19,6 +19,8 @@ public:
 	QString getFilePath() const;
 
 	bool erase(); // destroy email
+	bool unsetFlag(const QString &flag);
+	QByteArray readAll();
 
 	PMaildUser getUser();
 	const PMaildUser getUser() const;

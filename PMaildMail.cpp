@@ -59,4 +59,15 @@ const PMaildUser PMaildMail::getUser() const {
 	return user;
 }
 
+QByteArray PMaildMail::readAll() {
+	QFile f(getFilePath());
+	if (!f.open(QIODevice::ReadOnly)) return QByteArray();
+
+	return f.readAll(); // ~QFile will close it
+}
+
+bool PMaildMail::unsetFlag(const QString &) {
+	// TODO
+	return false;
+}
 

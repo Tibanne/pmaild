@@ -291,7 +291,45 @@ void PMaildServerPop3::server_cmd_dele(const QList<QByteArray>&p) {
 		return;
 	}
 	quint64 id = lid2id.value(lid);
+	if (toDelete.contains(id)) {
+		writeLine("-ERR Message is already marked for deletion");
+		return;
+	}
 	toDelete.insert(id);
 	writeLine("+OK Nessage marked for deletion");
+}
+
+void PMaildServerPop3::server_cmd_retr(const QList<QByteArray>&p) {
+	if (user.isNull()) {
+		writeLine("-ERR need to login first");
+		return;
+	}
+	if (p.size() != 1) {
+		writeLine("-ERR syntax error. Should use DELE <id>");
+		return;
+	}
+	quint64 lid = p.at(0).toLongLong();
+	if (!lid2id.contains(lid)) {
+		writeLine("-ERR Unknown message");
+		return;
+	}
+	quint64 id = lid2id.value(lid);
+	if (toDelete.contains(id)) {
+		writeLine("-ERR Message is marked for deletion");
+		return;
+	}
+	PMaildMail mail = user.getEmailById(id);
+	if (mail.isNull()) {
+		writeLine("-ERR mail is missing from server");
+		return;
+	}
+	QByteArray data = mail.readAll();
+	data = data.replace("\n.", "\n..");
+	writeLine("+OK");
+	write(data);
+	if (data.right(1) != "\n") write("\r\n");
+	writeLine(".");
+
+	mail.unsetFlag("recent");
 }
 

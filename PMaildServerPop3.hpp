@@ -28,7 +28,7 @@ public slots:
 	void server_cmd_dele(const QList<QByteArray>&);
 	void server_cmd_rset(const QList<QByteArray>&);
 	// mail read
-//	void server_cmd_retr(const QList<QByteArray>&);
+	void server_cmd_retr(const QList<QByteArray>&);
 //	void server_cmd_top(const QList<QByteArray>&);
 
 protected:
