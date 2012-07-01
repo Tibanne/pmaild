@@ -23,6 +23,8 @@ void PMaildMtaTxn::fullReset() {
 }
 
 void PMaildMtaTxn::reset() {
+	email_from = QByteArray();
+	email_to.clear();
 }
 
 const QByteArray &PMaildMtaTxn::getHelo() const {
@@ -51,11 +53,17 @@ bool PMaildMtaTxn::addTo(const QByteArray &to) {
 		error_msg = "550 Target is missing";
 		return false;
 	}
-	// TODO
+	QByteArray to_lower = to.toLower();
+	if (email_to.contains(to_lower)) {
+		error_msg = "550 Target duplicated";
+		return false;
+	}
+	email_to.insert(to_lower, to);
 	return true;
 }
 
 bool PMaildMtaTxn::prepare() {
+	// open a tmp file for writing
 	return true;
 }
 

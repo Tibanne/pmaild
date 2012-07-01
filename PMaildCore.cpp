@@ -4,9 +4,12 @@
 #include "PMaildUser.hpp"
 #include <QSettings>
 #include <QStringList>
+#include <QDateTime>
+#include <QCoreApplication>
 
 PMaildCore::PMaildCore(QSettings &_settings): settings(_settings) {
-	// void
+	// init random generator for code()
+	qsrand(QDateTime::currentDateTime().toMSecsSinceEpoch());
 }
 
 PMaildUser PMaildCore::getUser(QString login) {
@@ -94,5 +97,20 @@ QDir PMaildCore::getSpoolPath() {
 	}
 	path.makeAbsolute();
 	return path;
+}
+
+QString PMaildCore::genMailFileName() {
+	// generate the filename for a mail. 
+	// Format:
+	// Unix_Timestamp.Pid.Random.Hostname
+	return QString::number(QDateTime::currentDateTime().toTime_t()) + "." + QString::number(QCoreApplication::applicationPid()) + "." + code(10) + "." + QString::fromUtf8(getHostName());
+}
+
+QString PMaildCore::code(int len, QString chars) {
+	QString res;
+	while(len-- > 0) {
+		res += chars.at((quint64)qrand() * chars.size() / RAND_MAX);
+	}
+	return res;
 }
 

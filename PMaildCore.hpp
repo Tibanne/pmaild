@@ -23,6 +23,8 @@ public:
 	bool authUser(QString login, QString password);
 	PMaildUser getUser(QString login);
 	QDir getSpoolPath();
+	QString genMailFileName();
+	QString code(int len, QString chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"); // generate random string of length "int"
 
 	virtual PMaildDomain getDomain(QString domain) = 0;
 	virtual PMaildUser getUser(const PMaildDomain&, QString user) = 0;

@@ -30,6 +30,7 @@ private:
 	QByteArray helo;
 	QByteArray auth_user_login;
 	QByteArray email_from;
+	QMap<QByteArray,QByteArray> email_to;
 
 	QMap<QByteArray,QByteArray> transmit_log;
 
